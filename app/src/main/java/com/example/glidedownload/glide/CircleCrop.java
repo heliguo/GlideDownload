@@ -7,15 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import java.security.MessageDigest;
 
+import androidx.annotation.NonNull;
+
 /**
  * author:lgh on 2019-11-08 10:54
+ * 图片变换
  */
 public class CircleCrop extends BitmapTransformation {
 

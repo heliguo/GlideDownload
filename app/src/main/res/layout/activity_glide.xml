@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.glidedownload.glide.MyLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/background"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-        android:id="@+id/glide_subsampling_scale_imageview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="downloadImage"
+        android:text="下载图片" />
 
-</com.example.glidedownload.glide.MyLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showPic"
+        android:text="显示图片" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="target"
+        android:text="自定义target" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="listener"
+        android:text="listener监听" />
+
+    <com.example.glidedownload.glide.MyLayout
+        android:id="@+id/background"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center" />
+
+</LinearLayout>

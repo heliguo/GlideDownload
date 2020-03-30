@@ -28,7 +28,11 @@ public class ProgressResponseBody extends ResponseBody {
 
     private ProgressListener progressListener;
 
+    private String url;
+
+
     public ProgressResponseBody(String url, ResponseBody responseBody) {
+        this.url = url;
         this.responseBody = responseBody;
         progressListener = ProgressInterceptor.listenerMap.get(url);
     }
@@ -79,6 +83,7 @@ public class ProgressResponseBody extends ResponseBody {
                 progressListener.onProgress(progress);
             }
             if (progressListener != null && totalBytesRead == fullLength) {
+                ProgressInterceptor.listenerMap.remove(url);
                 progressListener = null;//下载完成
             }
             currentProgress = progress;
@@ -86,7 +91,4 @@ public class ProgressResponseBody extends ResponseBody {
         }
     }
 
-    public ProgressListener getProgressListener() {
-        return progressListener;
-    }
 }

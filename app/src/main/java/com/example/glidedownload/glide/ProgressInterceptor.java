@@ -1,5 +1,7 @@
 package com.example.glidedownload.glide;
 
+import android.util.Log;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -19,13 +21,11 @@ public class ProgressInterceptor implements Interceptor {
     public static final HashMap<String, ProgressListener> listenerMap = new HashMap<>();
 
 
-    public void addListener(String url, ProgressListener listener) {
-        if (!listenerMap.containsKey(url))
+    public static void addListener(String url, ProgressListener listener) {
             listenerMap.put(url, listener);
     }
 
-    public void removeListener(String url) {
-        if (listenerMap.containsKey(url))
+    public static void removeListener(String url) {
             listenerMap.remove(url);
     }
 
@@ -36,9 +36,11 @@ public class ProgressInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         String url = request.url().toString();
         ResponseBody body = response.body();
-        System.out.println("intercept:``````` " + url);
+        Log.e(ProgressInterceptor.class.getSimpleName(), "intercept:``````` "
+                + url);
         ResponseBody responseBody = new ProgressResponseBody(url, body);
-        System.out.println("intercept:=======> " + responseBody.contentLength());
+        Log.e(ProgressInterceptor.class.getSimpleName(),"intercept:=======> "
+                + responseBody.contentLength());
         Response newResponse = response.newBuilder().body(responseBody).build();
         return newResponse;
     }

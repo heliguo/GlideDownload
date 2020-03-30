@@ -1,18 +1,35 @@
 package com.example.glidedownload;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomViewTarget;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.example.glidedownload.glide.DownloadImageTarget;
 import com.example.glidedownload.glide.GlideApp;
 import com.example.glidedownload.glide.MyLayout;
+import com.example.glidedownload.glide.ProgressInterceptor;
+import com.example.glidedownload.glide.ProgressListener;
 
+import java.io.File;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.GrayscaleTransformation;
 
@@ -21,28 +38,117 @@ import jp.wasabeef.glide.transformations.GrayscaleTransformation;
  */
 public class GlideActivity extends AppCompatActivity {
 
-    private SubsamplingScaleImageView scaleImageView;
+    private ProgressDialog mProgressBar;
     private MyLayout myLayout;
-    private String url = "http://192.168.20.147:8080/app/book.png";
+    private String url = "http://cn.bing.com/az/hprichbg/rb/TOAD_ZH-CN7336795473_1920x1080.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide);
-        scaleImageView = findViewById(R.id.glide_subsampling_scale_imageview);
         myLayout = findViewById(R.id.background);
+        mProgressBar = new ProgressDialog(this);
+        mProgressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressBar.setMessage("加载中...");
+        mProgressBar.setMax(100);
+    }
+
+    public void downloadImage(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Context context = getApplicationContext();
+
+//                    FutureTarget<Drawable> submit = Glide.with(context)
+//                            .load(url)
+//                            .submit();
+//                    submit.get();
+
+                    FutureTarget<File> target = Glide.with(context)
+                            .load(url)
+                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+                    final File imageFile = target.get();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("TAG", "run: " + imageFile.getPath());
+                            Toast.makeText(context, imageFile.getPath(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void showPic(View view) {
+        ProgressInterceptor.addListener(url, new ProgressListener() {
+            @Override
+            public void onProgress(int progress) {
+                mProgressBar.setProgress(progress);
+            }
+        });
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.load_failed)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .transform(new BlurTransformation(), new GrayscaleTransformation());
 
-        CustomViewTarget<MyLayout, Drawable> target = myLayout.getTarget();
+        final CustomViewTarget<MyLayout, Drawable> target = myLayout.getTarget();
 
-        //测试自定义模块OKHTTP
-        GlideApp.with(GlideActivity.this)
+
+//        //测试自定义模块OKHTTP
+//        GlideApp.with(GlideActivity.this)
+//                .load(url)
+////                .apply(options)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .skipMemoryCache(true)
+//                .into(target);
+
+        DownloadImageTarget downloadImageTarget = GlideApp.with(GlideActivity.this)
                 .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(true)
-                .into(target);
+                .downloadOnly(new DownloadImageTarget(){
+                    @Override
+                    public void onLoadStarted(@Nullable Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                        mProgressBar.show();
+                    }
+
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        super.onResourceReady(resource,transition);
+                        mProgressBar.dismiss();
+                        ProgressInterceptor.removeListener(url);
+                        Glide.with(GlideActivity.this)
+                                .load(resource)
+                                .into(target);
+
+                    }
+                });
+
+    }
+
+    public void target(View view) {
+        DownloadImageTarget downloadImageTarget = Glide.with(this)
+                .load(url)
+                .downloadOnly(new DownloadImageTarget());
+    }
+
+    public void listener(View view) {
+        Glide.with(this).load(url)
+                .addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                }).into(myLayout.getTarget());
     }
 }

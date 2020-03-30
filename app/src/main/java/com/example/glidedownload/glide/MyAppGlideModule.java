@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.cache.ExternalPreferredCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -19,6 +20,24 @@ import okhttp3.OkHttpClient;
 
 /**
  * author:lgh on 2019-11-08 11:08
+ *
+ * 自定义模块必须配置manifest
+ * <manifest>
+ *
+ *     ...
+ *
+ *     <application>
+ *
+ *         <meta-data
+ *             android:name="com.example.glidetest.MyGlideModule" 类全路径
+ *             android:value="GlideModule" /> 固定写法
+ *
+ *         ...
+ *
+ *     </application>
+ * </manifest>
+ * ————————————————
+ *
  */
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
@@ -28,7 +47,7 @@ public class MyAppGlideModule extends AppGlideModule {
     @Override
     public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
         builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context, DISK_CACHE_SIZE));
-        super.applyOptions(context, builder);
+
     }
 
     @Override

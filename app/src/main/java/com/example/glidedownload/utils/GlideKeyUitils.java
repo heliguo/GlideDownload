@@ -45,7 +45,6 @@ public class GlideKeyUitils {
      * @param width  设备屏幕分辨率的宽度 eg : 1080
      * @param height 设备屏幕分辨率的高度 eg : 1920
      * @return
-     * @autor 胖虎 https://blog.csdn.net/ljphhj
      */
     private String getGlide3_SafeKey(String url, int width, int height) {
         byte[] dimensions = ByteBuffer.allocate(8)

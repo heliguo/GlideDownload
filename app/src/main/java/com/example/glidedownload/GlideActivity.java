@@ -8,6 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -16,7 +20,6 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomViewTarget;
-import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.glidedownload.glide.DownloadImageTarget;
@@ -24,12 +27,10 @@ import com.example.glidedownload.glide.GlideApp;
 import com.example.glidedownload.glide.MyLayout;
 import com.example.glidedownload.glide.ProgressInterceptor;
 import com.example.glidedownload.glide.ProgressListener;
+import com.example.glidedownload.utils.GlideKeyUitils;
 
 import java.io.File;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.GrayscaleTransformation;
 
@@ -110,7 +111,7 @@ public class GlideActivity extends AppCompatActivity {
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(true)
-                .downloadOnly(new DownloadImageTarget(){
+                .downloadOnly(new DownloadImageTarget() {
                     @Override
                     public void onLoadStarted(@Nullable Drawable placeholder) {
                         super.onLoadStarted(placeholder);
@@ -119,8 +120,17 @@ public class GlideActivity extends AppCompatActivity {
 
                     @Override
                     public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                        super.onResourceReady(resource,transition);
+                        super.onResourceReady(resource, transition);
                         mProgressBar.dismiss();
+                        String filePath = resource.getAbsolutePath();
+                        if (filePath.contains(GlideKeyUitils.getGlide4_SafeKey(url))) {
+
+                            String newFilePath;
+                            filePath.lastIndexOf("\\");
+
+                            Log.e("65554", "onResourceReady: " + GlideKeyUitils.getGlide4_SafeKey(url));
+//                            resource.renameTo(new File(newFilePath));
+                        }
                         ProgressInterceptor.removeListener(url);
                         Glide.with(GlideActivity.this)
                                 .load(resource)

@@ -24,7 +24,7 @@ public class GlideKeyUitils {
      * @param url 图片地址url
      * @return 返回图片在磁盘缓存的key值
      */
-    private static String getGlide4_SafeKey(String url) {
+    public static String getGlide4_SafeKey(String url) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             EmptySignature signature = EmptySignature.obtain();

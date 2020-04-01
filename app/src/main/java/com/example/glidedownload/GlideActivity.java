@@ -27,6 +27,8 @@ import com.example.glidedownload.glide.GlideApp;
 import com.example.glidedownload.glide.MyLayout;
 import com.example.glidedownload.glide.ProgressInterceptor;
 import com.example.glidedownload.glide.ProgressListener;
+import com.example.glidedownload.utils.FileCopyUtils;
+import com.example.glidedownload.utils.FixFileNameUtils;
 import com.example.glidedownload.utils.GlideKeyUitils;
 
 import java.io.File;
@@ -124,12 +126,11 @@ public class GlideActivity extends AppCompatActivity {
                         mProgressBar.dismiss();
                         String filePath = resource.getAbsolutePath();
                         if (filePath.contains(GlideKeyUitils.getGlide4_SafeKey(url))) {
-
-                            String newFilePath;
-                            filePath.lastIndexOf("\\");
-
-                            Log.e("65554", "onResourceReady: " + GlideKeyUitils.getGlide4_SafeKey(url));
-//                            resource.renameTo(new File(newFilePath));
+                            int loc = url.lastIndexOf("/");
+                            int len = url.length();
+                            String newFileName = url.substring(loc + 1, len);
+                            String newFilePath = filePath.replaceAll(GlideKeyUitils.getGlide4_SafeKey(url), newFileName);
+                            String s = FixFileNameUtils.FixFileName(filePath, newFileName);
                         }
                         ProgressInterceptor.removeListener(url);
                         Glide.with(GlideActivity.this)

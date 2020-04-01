@@ -27,7 +27,6 @@ import com.example.glidedownload.glide.GlideApp;
 import com.example.glidedownload.glide.MyLayout;
 import com.example.glidedownload.glide.ProgressInterceptor;
 import com.example.glidedownload.glide.ProgressListener;
-import com.example.glidedownload.utils.FileCopyUtils;
 import com.example.glidedownload.utils.FixFileNameUtils;
 import com.example.glidedownload.utils.GlideKeyUitils;
 
@@ -130,7 +129,7 @@ public class GlideActivity extends AppCompatActivity {
                             int len = url.length();
                             String newFileName = url.substring(loc + 1, len);
                             String newFilePath = filePath.replaceAll(GlideKeyUitils.getGlide4_SafeKey(url), newFileName);
-                            String s = FixFileNameUtils.FixFileName(filePath, newFileName);
+                            String s = FixFileNameUtils.copyPic(filePath, newFilePath);
                         }
                         ProgressInterceptor.removeListener(url);
                         Glide.with(GlideActivity.this)

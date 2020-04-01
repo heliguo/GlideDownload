@@ -1,6 +1,10 @@
 package com.example.glidedownload.utils;
 
+import android.util.Log;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  * author:lgh on 2020-04-01 10:58
@@ -32,5 +36,44 @@ public class FixFileNameUtils {
             return null;
         }
         return newFilePath;
+    }
+
+    /**
+     * 复制文件（图片）
+     *
+     * @param srcpic 原文件名
+     * @param despic 新文件名
+     * @return 新文件路径
+     */
+    public static String copyPic(String srcpic, String despic) {
+        if (srcpic.equals(despic)) {
+            Log.e("FixFileNameUtils", "copyPic fialed");
+            return null;
+        }
+        File file1 = new File(srcpic);
+        File file2 = new File(despic);
+        if (file2.exists()){
+            Log.e("FixFileNameUtils", "despic exists");
+            return null;
+        }
+        byte[] b = new byte[(int) file1.length()];
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            in = new FileInputStream(file1);
+            //没有指定文件则会创建
+            out = new FileOutputStream(file2);
+            //read()--int，-1表示读取完毕
+            while (in.read(b) != -1) {
+                out.write(b);
+            }
+            out.flush();
+            in.close();
+            out.close();
+            return despic;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
